@@ -40,8 +40,9 @@ class Classifier(BaseProcessor):
                 training = ee.FeatureCollection(neighbors.sample(
                     region=roi_train,
                     numPixels=self._points,
-                    scale=settings.EXPORT_SCALE)
-                )
+                    scale=settings.EXPORT_SCALE, 
+                    tileScale=4
+                ))
 
                 classifier = ee.Classifier.randomForest(self._trees).train(
                     features=training,
@@ -96,14 +97,16 @@ class ClassifierFusionTable(BaseProcessor):
                 training_roi = ee.FeatureCollection(neighbors.addBands(image1).sample(
                     region=geo1,
                     numPixels=self._points/2,
-                    scale=settings.EXPORT_SCALE)
-                )
+                    scale=settings.EXPORT_SCALE,
+                    tileScale=4
+                ))
 
                 training_others = ee.FeatureCollection(neighbors.addBands(image2).sample(
                     region=geo2,
                     numPixels=self._points/2,
-                    scale=settings.EXPORT_SCALE)
-                )
+                    scale=settings.EXPORT_SCALE, 
+                    tileScale=4
+                ))
 
                 training = training_roi.merge(training_others)
 
@@ -148,8 +151,9 @@ class ClassifierFixBounds(Classifier):
                     training = ee.FeatureCollection(neighbors.sample(
                         region=roi_train,
                         numPixels=self._points,
-                        scale=settings.EXPORT_SCALE)
-                    )
+                        scale=settings.EXPORT_SCALE, 
+                        tileScale=4
+                    ))
 
             for image_name, image_data in self._mosaics.items():
                 if year != image_data['year']:
